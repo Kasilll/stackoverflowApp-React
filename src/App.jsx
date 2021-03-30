@@ -11,7 +11,7 @@ function App() {
 	const [ sortSwitch, setSortSwitch ] = React.useState(false)
 	const [ sortValue, setSortValue ] = React.useState('По возрастанию')
 	const [ inputValue, setInputValue ] = React.useState('')
-	const [ loading, setLoading ] = React.useState(false)
+	const [ loaded, setLoaded ] = React.useState(false)
 	const [ renderData, setRenderData ] = React.useState([])
 
 	React.useEffect(() => {
@@ -19,12 +19,11 @@ function App() {
 		fetch('https://api.stackexchange.com/2.2/search?intitle=react&site=stackoverflow')
 			.then((post) => post.json())
 			.then((post) => {
-				post.items.forEach((el) => {
-					if (el.is_answered && el.owner.reputation >= 50) {
-						setData((prev) => [ ...prev, el ])
-					}
+				const dataPosts = post.items.filter((el) => {
+					return el.is_answered && el.owner.reputation >= 50 // фильтруем нужные данные
 				})
-				setLoading(true) // устанавливаем флаг true, после получения постов
+				setData(dataPosts)
+				setLoaded(true) // устанавливаем флаг true, после получения постов
 			})
 			.catch((r) => console.log(r))
 	}, [])
@@ -43,18 +42,18 @@ function App() {
 	React.useEffect(
 		() => {
 			// после загрузки данных добавлем их в массив, который будет рендериться
-			if (loading) {
-				setRenderData([ ...filtersPosts(data, inputValue) ])
+			if (loaded) {
+				setRenderData([ ...filtersPosts(data, inputValue) ]) 
 			}
 		},
-		[ inputValue, loading, data ]
+		[ inputValue, loaded, data ]
 	) // так же если мы будет набирать текст, то будет происходить фильтрация
 
 	const handlerOnChange = (e) => {
 		setInputValue(e.target.value)
 	}
 
-	const sort = () => {
+	const handlerOnckicksort = () => {
 		const sort = _.sortBy(data, function(item) {
 			// сортируем по возрастанию
 			return item.creation_date
@@ -63,14 +62,14 @@ function App() {
 			// если перекоючаталь true отправляем в состояния рендера массив по возрастанию
 			setRenderData(sort)
 		} else {
-			setRenderData(_.reverse(sort))
+			setRenderData(_.reverse(sort)) // иначе переворачиваем его
 		}
 		setSortSwitch(!sortSwitch) // после нажатия меняем флаг сортировки
 	}
 
 	return (
 		<div>
-			<Button className="sort-btn" onClick={sort} variant="contained" color="primary">
+			<Button className="sort-btn" onClick={handlerOnckicksort} variant="contained" color="primary">
 				{sortValue}
 			</Button>
 			<div className="container">
@@ -82,14 +81,14 @@ function App() {
 					inputProps={{ 'aria-label': 'description' }}
 				/>
 				<div className="container__post">
-					{!loading ? (
+					{!loaded ? (
 						<div className="container__loading">Loading...</div>
 					) : (
-						renderData.map((el, ind) => (
+						renderData.map( el => (
 							<Post
-								key={`${ind}_${el.creation_date}`}
+								key={el.question_id}
 								title={el.title}
-								link={el.owner.link}
+								link={el.link}
 								avatar={el.owner.profile_image}
 							/>
 						))
