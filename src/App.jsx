@@ -84,12 +84,10 @@ function App() {
 					{!loaded ? (
 						<div className="container__loading">Loading...</div>
 					) : (
-						renderData.map( el => (
+						renderData.map(el=> (
 							<Post
 								key={el.question_id}
-								title={el.title}
-								link={el.link}
-								avatar={el.owner.profile_image}
+								post={el}
 							/>
 						))
 					)}
