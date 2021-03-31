@@ -29,7 +29,7 @@ function App() {
 	}, [])
 
 	React.useEffect(
-		// меняем текст кнопки в зависимости от переменной
+		// меняем текст кнопки в зависимости от значения переключателя
 		() => {
 			if (!sortSwitch) 
 				setSortValue('По возрастанию')
@@ -69,7 +69,7 @@ function App() {
 
 	return (
 		<div>
-			<Button className="sort-btn" onClick={handlerOnckicksort} variant="contained" color="primary">
+			<Button className="sort-btn" onClick={handlerOnckicksort} variant="contained" color="primary" style={{fontSize: 'calc(6px + 6 * (100vw/1800))'}}>
 				{sortValue}
 			</Button>
 			<div className="container">

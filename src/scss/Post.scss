@@ -10,7 +10,10 @@
 	display: flex;
 	align-items: center;
 	@media screen and (max-width : 1280px) {
-        font-size: 10px;
+        font-size: 6px;
+	}
+	@media screen and (max-width : 320px) {
+        font-size: 4px;
     }
 	.post__link {
 		position: absolute;
